@@ -1,3 +1,0 @@
-/home/wang/WorkSpace/cpp_debug/build/CMakeFiles/rebuild_cache.dir
-/home/wang/WorkSpace/cpp_debug/build/CMakeFiles/edit_cache.dir
-/home/wang/WorkSpace/cpp_debug/build/CMakeFiles/Obstacle_Container.dir
