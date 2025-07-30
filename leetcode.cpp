@@ -1,0 +1,154 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <cmath>
+
+using namespace std;
+
+class Solution
+{
+public:
+    int candy(vector<int> &ratings)
+    {
+        int n = ratings.size();
+        int sum = 0;
+        vector<int> candies(n, 1);
+        for (int i = 1; i < n; i++)
+        {
+            if (ratings[i] > ratings[i - 1])
+            {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+        sum += candies[n - 1];
+        for (int i = n - 2; i >= 0; i--)
+        {
+            if (ratings[i] > ratings[i + 1])
+            {
+                candies[i] = max(candies[i + 1] + 1, candies[i]);
+            }
+            sum += candies[i];
+        }
+        return sum;
+    }
+
+    // int trap(vector<int> &height)
+    // {
+    //     int n = height.size();
+    //     int sum_rain = 0;
+    //     for (int i = 1; i < n - 1; i++)
+    //     {
+    //         int right_max = 0;
+    //         int left_max = 0;
+    //         for (int j = i + 1; j < n; j++)
+    //         {
+    //             right_max = max(height[j], right_max);
+    //         }
+    //         for (int j = i - 1; j >= 0; j--)
+    //         {
+    //             left_max = max(height[j], left_max);
+    //         }
+    //         sum_rain += max((min(left_max, right_max) - height[i]), 0);
+    //     }
+    //     return sum_rain;
+    // }
+
+    int trap(vector<int> &height)
+    {
+        int n = height.size();
+        int sum_rain = 0;
+
+        vector<int> left_max(n);
+        vector<int> right_max(n);
+
+        for (int i = 1; i < n - 1; i++)
+        {
+            left_max[i] = max(left_max[i - 1], height[i - 1]);
+        }
+
+        for (int i = n - 2; i > 0; i--)
+        {
+            right_max[i] = max(right_max[i + 1], height[i + 1]);
+        }
+
+        for (int i = 1; i < n - 1; i++)
+        {
+            sum_rain += max(min(left_max[i], right_max[i]) - height[i], 0);
+        }
+
+        return sum_rain;
+    }
+
+    int romanToInt(string s)
+    {
+        unordered_map<char, int> roman_int_map = {
+            {'I', 1},
+            {'V', 5},
+            {'X', 10},
+            {'L', 50},
+            {'C', 100},
+            {'D', 500},
+            {'M', 1000}};
+
+        int sum = 0;
+
+        for (int i = 0; i < s.size(); i++)
+        {
+
+            if ((i < s.size() - 1) && (roman_int_map[s[i]] < roman_int_map[s[i + 1]]))
+            {
+                sum += (roman_int_map[s[i + 1]] - roman_int_map[s[i]]);
+                i++;
+            }
+            else
+            {
+                sum += roman_int_map[s[i]];
+            }
+        }
+    }
+
+    string intToRoman(int num)
+    {
+        vector<pair<int, string>> valueSymbols = {
+            {1000, "M"},
+            {900, "CM"},
+            {500, "D"},
+            {400, "CD"},
+            {100, "C"},
+            {90, "XC"},
+            {50, "L"},
+            {40, "XL"},
+            {10, "X"},
+            {9, "IX"},
+            {5, "V"},
+            {4, "IV"},
+            {1, "I"}};
+        string roman = "";
+        for (const auto &[value, symbol] : valueSymbols)
+        {
+            while (value <= num)
+            {
+                roman += symbol;
+                num -= value;
+                if (num == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        return roman;
+    }
+};
+
+int main()
+{
+    vector<int> ratings = {1, 0, 2};
+    string s = "MCMXCIV";
+    int num = 3749;
+    Solution sol;
+    std::cout << sol.candy(ratings) << std::endl;
+    std::cout << sol.romanToInt(s) << std::endl;
+    std::cout << sol.intToRoman(num) << std::endl;
+    return 0;
+}
