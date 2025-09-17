@@ -139,6 +139,46 @@ public:
 
         return roman;
     }
+
+    int lengthOfLastWord(string s)
+    {
+        int length = 0;
+        int i = s.length() - 1;
+        while (i >= 0 && s[i] == ' ')
+        {
+            i--;
+        }
+        while (i >= 0 && s[i] != ' ')
+        {
+            length++;
+            i--;
+        }
+        return length;
+    }
+
+    string longestCommonPrefix(vector<string> &strs)
+    {
+        if (strs.empty())
+        {
+            return "";
+        }
+        for (int i = 0; i < strs[0].length(); i++)
+        {
+            char c = strs[0][i];
+            for (int j = 1; j < strs.size(); j++)
+            {
+                if (i >= strs[j].length() || c != strs[j][i])
+                {
+                    return strs[0].substr(0, i);
+                }
+            }
+        }
+        return strs[0];
+    }
+
+    bool isPalindrome(string s)
+    {
+    }
 };
 
 int main()
