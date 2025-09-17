@@ -176,7 +176,61 @@ public:
         return strs[0];
     }
 
+    string s = "A man, a plan, a canal: Panama";
+
     bool isPalindrome(string s)
+    {
+        // 预处理字符串
+        string filtered;
+        for (char c : s)
+        {
+            if (isalnum(c))
+            {
+                filtered += tolower(c);
+            }
+        }
+        if (filtered.length() == 0)
+        {
+            return false;
+        }
+        int left = 0;
+        int right = filtered.length() - 1;
+        while (left < right)
+        {
+            if (filtered[left] != filtered[right])
+            {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    bool isSubsequence(string s, string t)
+    {
+        int s_p = 0;
+        int t_p = 0;
+        if (s.length() == 0)
+        {
+            return true;
+        }
+        while (t_p < t.length())
+        {
+            if (t[t_p] == s[s_p])
+            {
+                s_p++;
+                if (s_p == s.length())
+                {
+                    return true;
+                }
+            }
+            t_p++;
+        }
+        return false;
+    }
+
+    vector<int> twoSum(vector<int> &numbers, int target)
     {
     }
 };
