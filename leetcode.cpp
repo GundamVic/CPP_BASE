@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 
@@ -249,6 +250,74 @@ public:
                 left++;
             }
         }
+    }
+
+    int maxArea(vector<int> &height)
+    {
+        int left = 0;
+        int right = height.size() - 1;
+        int res = (right - left) * min(height[left], height[right]);
+
+        while (left < right)
+        {
+            if ((right - left) * min(height[left], height[right]) > res)
+            {
+                res = (right - left) * min(height[left], height[right]);
+            }
+            if (height[right] < height[left])
+            {
+                right--;
+            }
+            else
+            {
+                left++;
+            }
+        }
+        return res;
+    }
+
+    vector<vector<int>> threeSum(vector<int> &nums)
+    {
+        vector<vector<int>> res;
+        if (nums.size() < 3)
+        {
+            return res;
+        }
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size() - 2; i++)
+        {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+            int left = i + 1;
+            int right = nums.size() - 1;
+
+            while (left < right)
+            {
+                if (nums[i] + nums[left] + nums[right] == 0)
+                {
+                    res.push_back({nums[i], nums[left], nums[right]});
+                    while (left < right && nums[left + 1] == nums[left])
+                    {
+                        left++;
+                    }
+                    while (left < right && nums[right - 1] == nums[right])
+                    {
+                        right--;
+                    }
+                    left++;
+                    right--;
+                }
+                else if (nums[i] + nums[left] + nums[right] < 0)
+                {
+                    left++;
+                }
+                else
+                {
+                    right--;
+                }
+            }
+        }
+        return res;
     }
 };
 
