@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <cmath>
 #include <algorithm>
+#include <climits>
+#include <sstream>
 
 using namespace std;
 
@@ -318,6 +320,193 @@ public:
             }
         }
         return res;
+    }
+
+    int minSubArrayLen(int target, vector<int> &nums)
+    {
+        int n = nums.size();
+        int left = 0;
+        int minLen = INT_MAX;
+        int sum = 0;
+        for (int right = 0; right < n; right++)
+        {
+            sum += nums[right];
+
+            while (sum >= target)
+            {
+                minLen = min(minLen, right - left + 1);
+                sum -= nums[left];
+                left++;
+            }
+        }
+        return minLen == INT_MAX ? 0 : minLen;
+    }
+
+    int lengthOfLongestSubstring(string s)
+    {
+        int maxLen = 0;
+        int sLen = s.length();
+        int left = 0;
+        unordered_map<char, int> charIndex;
+        for (int right = 0; right < sLen; right++)
+        {
+            char currentChar = s[right];
+            if (charIndex.find(currentChar) != charIndex.end() && charIndex[currentChar] >= left)
+            {
+                left = charIndex[currentChar] + 1;
+            }
+            charIndex[currentChar] = right;
+            maxLen = max(maxLen, right - left + 1);
+        }
+        return maxLen;
+    }
+
+    vector<int> findSubstring(string s, vector<string> &words)
+    {
+        vector<int> res;
+        if (s.empty() || words.empty())
+            return res;
+
+        unordered_map<string, int> wordCount;
+        int n = words.size();
+        int sLen = s.length();
+        for (int i = 0; i < words.size(); i++)
+        {
+            wordCount[words[i]]++;
+        }
+        int wordLen = words[0].length();
+        int totalWordsLen = words.size() * wordLen;
+        if (sLen < totalWordsLen)
+        {
+            return res;
+        }
+        for (int i = 0; i <= sLen - totalWordsLen; i++)
+        {
+            unordered_map<string, int> seenWord;
+            for (int j = 0; j < n; j++)
+            {
+                string sub_s = s.substr(i + j * wordLen, wordLen);
+                if (wordCount.find(sub_s) != wordCount.end())
+                {
+                    seenWord[sub_s]++;
+                }
+                else
+                {
+                    break;
+                }
+                if (seenWord[sub_s] > wordCount[sub_s])
+                {
+                    break;
+                }
+                if (j == n)
+                {
+                    res.push_back(i);
+                }
+            }
+        }
+        return res;
+    }
+
+    bool canConstruct(string ransomNote, string magazine)
+    {
+
+        unordered_map<char, int> magCount;
+        unordered_map<char, int> noteCount;
+        for (int i = 0; i < magazine.length(); i++)
+        {
+            magCount[magazine[i]]++;
+        }
+        for (char c : ransomNote)
+        {
+            if (magCount.find(c) == magCount.end() || magCount[c] == 0)
+            {
+                return false;
+            }
+            magCount[c]--;
+        }
+        return true;
+    }
+
+    bool isIsomorphic(string s, string t)
+    {
+        if (s.length() != t.length())
+            return false;
+        unordered_map<char, char> s2t;
+        unordered_map<char, char> t2s;
+        for (int i = 0; i < s.length(); i++)
+        {
+            if (s2t.count(s[i]))
+            {
+                if (s2t[s[i]] != t[i])
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                s2t[s[i]] = t[i];
+            }
+        }
+        for (int i = 0; i < s.length(); i++)
+        {
+            if (t2s.count(t[i]))
+            {
+                if (t2s[t[i]] != s[i])
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                t2s[t[i]] = s[i];
+            }
+        }
+        return true;
+    }
+
+    bool wordPattern(string pattern, string s)
+    {
+        vector<string> sWords;
+        stringstream ss(s);
+        string word;
+        while (ss << word)
+        {
+            sWords.push_back(word);
+        }
+        if (pattern.length() != sWords.size())
+            return false;
+
+        unordered_map<char, string> p2s;
+        unordered_map<string, char> s2p;
+        for (int i = 0; i < sWords.size(); i++)
+        {
+            if (p2s.count(pattern[i]))
+            {
+                if (p2s[pattern[i]] != sWords[i])
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                p2s[pattern[i]] = sWords[i];
+            }
+        }
+        for (int i = 0; i < sWords.size(); i++)
+        {
+            if (s2p.count(sWords[i]))
+            {
+                if (s2p[sWords[i]] != pattern[i])
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                s2p[sWords[i]] = pattern[i];
+            }
+        }
+        return true;
     }
 };
 
