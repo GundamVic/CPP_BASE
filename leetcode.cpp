@@ -469,7 +469,7 @@ public:
         vector<string> sWords;
         stringstream ss(s);
         string word;
-        while (ss << word)
+        while (ss >> word)
         {
             sWords.push_back(word);
         }
@@ -507,6 +507,75 @@ public:
             }
         }
         return true;
+    }
+
+    bool isAnagram(string s, string t)
+    {
+        if (s.length() != t.length())
+        {
+            return false;
+        }
+        unordered_map<char, int> sMap;
+        for (int i = 0; i < s.length(); i++)
+        {
+            if (sMap.find(s[i]) != sMap.end())
+            {
+                sMap[s[i]]++;
+            }
+            else
+            {
+                sMap[s[i]] = 1;
+            }
+        }
+        for (int i = 0; i < t.length(); i++)
+        {
+            if (sMap.find(t[i]) != sMap.end())
+            {
+                sMap[t[i]]--;
+                if (sMap[t[i]] < 0)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    vector<vector<string>> groupAnagrams(vector<string> &strs)
+    {
+        vector<vector<string>> res;
+        if (strs.size() == 0)
+            return res;
+        unordered_map<string, vector<string>> groups;
+        for (int i = 0; i < strs.size(); i++)
+        {
+            string str = strs[i];
+            sort(str.begin(), str.end());
+            groups[str].push_back(strs[i]);
+        }
+        for (auto grp : groups)
+        {
+            res.push_back(grp.second);
+        }
+        return res;
+    }
+
+    vector<int> twoSum(vector<int> &nums, int target)
+    {
+        unordered_map<int, int> minus_val;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (minus_val.find(nums[i]) != minus_val.end())
+            {
+                return {i, minus_val[nums[i]]};
+            }
+            minus_val[target - nums[i]] = i;
+        }
+        return {};
     }
 };
 
