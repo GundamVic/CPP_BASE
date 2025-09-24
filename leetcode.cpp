@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <climits>
 #include <sstream>
+#include <unordered_set>
 
 using namespace std;
 
@@ -576,6 +577,205 @@ public:
             minus_val[target - nums[i]] = i;
         }
         return {};
+    }
+
+    bool isHappy(int n)
+    {
+        unordered_set<int> square_sum_set;
+        while (!square_sum_set.count(n) && get_sum(n) != 1)
+        {
+            square_sum_set.insert(n);
+            n = get_sum(n);
+        }
+        if (get_sum(n) == 1)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    int get_sum(int n)
+    {
+        int sum = 0;
+        int digit = 0;
+        while (n > 0)
+        {
+            sum += ((n % 10) * (n % 10));
+            n /= 10;
+        }
+        return sum;
+    }
+
+    bool containsNearbyDuplicate(vector<int> &nums, int k)
+    {
+        unordered_map<int, int> num_index;
+        for (int i = 0; i < nums.size(); i++)
+        {
+            if (num_index.find(nums[i]) == num_index.end())
+            {
+                num_index[nums[i]] = i;
+            }
+            else if (abs(num_index[nums[i]] - i) <= k)
+            {
+                return true;
+            }
+            else
+            {
+                num_index[nums[i]] = i;
+            }
+        }
+        return false;
+    }
+
+    int longestConsecutive(vector<int> &nums)
+    {
+        unordered_map<int, int> num_length;
+        int maxLength = 0;
+        for (int num : nums)
+        {
+            if (num_length.count(num))
+            {
+                continue;
+            }
+            int left = num_length.count(num - 1) ? num_length[num - 1] : 0;
+            int right = num_length.count(num + 1) ? num_length[num + 1] : 0;
+            int currentLength = left + 1 + right;
+            num_length[num] = currentLength;
+            num_length[num - left] = currentLength;
+            num_length[num + right] = currentLength;
+
+            maxLength = max(maxLength, currentLength);
+        }
+        return maxLength;
+    }
+
+    vector<string> summaryRanges(vector<int> &nums)
+    {
+        if (nums.empty())
+            return {};
+
+        vector<string> res;
+        int start = nums[0];
+        int prev = nums[0];
+
+        for (int i = 1; i < nums.size(); i++)
+        {
+            if (nums[i] == prev + 1)
+            {
+                prev = nums[i];
+            }
+            else
+            {
+                if (start == prev)
+                {
+                    res.push_back(to_string(start));
+                }
+                else
+                {
+                    res.push_back(to_string(start) + "->" + to_string(prev));
+                }
+                start = nums[i];
+                prev = nums[i];
+            }
+        }
+
+        // 处理最后一个区间
+        if (start == prev)
+        {
+            res.push_back(to_string(start));
+        }
+        else
+        {
+            res.push_back(to_string(start) + "->" + to_string(prev));
+        }
+
+        return res;
+    }
+
+    vector<vector<int>> merge(vector<vector<int>> &intervals)
+    {
+
+        vector<vector<int>> res;
+        if (intervals.empty())
+        {
+            return res;
+        }
+        sort(intervals.begin(), intervals.end());
+        res.push_back(intervals[0]);
+        for (int i = 1; i < intervals.size(); i++)
+        {
+            if (res.back()[1] >= intervals[i][0])
+            {
+                res.back()[1] = max(res.back()[1], intervals[i][1]);
+            }
+            else
+            {
+                res.push_back(intervals[i]);
+            }
+        }
+        return res;
+    }
+
+    vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval)
+    {
+        vector<vector<int>> res;
+        if (intervals.empty())
+        {
+            res.push_back(newInterval);
+            return res;
+        }
+        bool insert_flag = false;
+        for (int i = 0; i < intervals.size(); i++)
+        {
+            if (intervals[i][0] > newInterval[1])
+            {
+                if (!insert_flag)
+                {
+                    res.push_back(newInterval);
+                    insert_flag = true;
+                }
+                res.push_back(intervals[i]);
+            }
+            else if (intervals[i][1] < newInterval[0])
+            {
+                res.push_back(intervals[i]);
+            }
+            else
+            {
+                newInterval[0] = min(intervals[i][0], newInterval[0]);
+                newInterval[1] = max(intervals[i][1], newInterval[1]);
+            }
+        }
+        if (!insert_flag)
+        {
+            res.push_back(newInterval);
+        }
+        return res;
+    }
+
+    int findMinArrowShots(vector<vector<int>> &points)
+    {
+        if (points.empty())
+        {
+            return 0;
+        }
+        sort(points.begin(), points.end(), [](const vector<int> a, const vector<int> b)
+             { return a[1] < b[1]; });
+        int arrow = points[0][1];
+        int res = 1;
+        for (int i = 1; i < points.size(); i++)
+        {
+            if (arrow < points[i][0])
+            {
+                res++;
+                arrow = points[i][1];
+            }
+        }
+        return res;
+    }
+
+    bool isValid(string s)
+    {
     }
 };
 
